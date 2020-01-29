@@ -1,0 +1,15 @@
+<!-- Including the page's header -->
+<%- include('partials/header.ejs') -%>
+
+<!-- Starting Text -->
+<h1>Home</h1>
+<p><%=homeStartingText%></p>
+
+<!-- Adding Posts -->
+<% postsArray.forEach(function(post){%>
+  <h1><%=post.title%></h1>
+  <p><%=post.body.substring(0,100) + " ..."%> <a href="/posts/<%=post._id%>">Read More</a></p>
+<%});%>
+
+<!-- Including the page's footer -->
+<%- include('partials/footer.ejs') -%>
