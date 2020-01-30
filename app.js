@@ -18,82 +18,89 @@ const app = express();
 
 // Setting up the ejs, body parser and public folder
 app.set('view engine', 'ejs');
-app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.urlencoded({
+  extended: true
+}));
 app.use(express.static("public"));
 
 // Setting up MongoDB/mongoose Connection
-mongoose.connect('mongodb://localhost:27017/blogDB',{useNewUrlParser:true});
+mongoose.connect('mongodb://localhost:27017/blogDB', {
+  useNewUrlParser: true
+});
 
 // Creating schemas
 const postSchema = new mongoose.Schema({
   title: {
     type: String,
-    required: [true,'The post must have a title.']
+    required: [true, 'The post must have a title.']
   },
   body: {
     type: String,
-    required: [true,'The post must have a content']
+    required: [true, 'The post must have a content']
   }
 });
 
 // Creating models
-const Post = new mongoose.model('Post',postSchema);
+const Post = new mongoose.model('Post', postSchema);
 
 // Setting up Home ('/') route
-app.get('/',function(req,res){
-  Post.find({},function(err,foundPosts){
-    if(!err){
-      res.render('home',{
+app.get('/', (req, res) => {
+  Post.find({}, (err, foundPosts) => {
+    if (!err) {
+      res.render('home', {
         homeStartingText: homeStartingContent,
-        postsArray: foundPosts});
-    }
-    else{
+        postsArray: foundPosts
+      });
+    } else {
       console.log(err);
     }
   });
 });
 
 // Setting up '/about' route
-app.get('/about',function(req,res){
-  res.render('about',{aboutText: aboutContent});
+app.get('/about', (req, res) => {
+  res.render('about', {
+    aboutText: aboutContent
+  });
 });
 
 // Setting up '/contact' route
-app.get('/contact',function(req,res){
-  res.render('contact',{contactText: contactContent});
+app.get('/contact', (req, res) => {
+  res.render('contact', {
+    contactText: contactContent
+  });
 });
 
 // Setting up '/compose' route
-app.get('/compose',function(req,res){
+app.get('/compose', (req, res) => {
   res.render('compose');
 });
 
 // Setting up the 'post' request
-app.post('/compose',function(req,res){
+app.post('/compose', (req, res) => {
   const post = new Post({ // creating post object to be added to the database
     title: req.body.newEntryTitle,
     body: req.body.newEntryBody,
   });
-  post.save(function(err){ // Saving the post to the database
-    if(!err){
+  post.save((err) => { // Saving the post to the database
+    if (!err) {
       res.redirect('/'); // redirects to the 'home' route
     }
   });
 });
 
 // Setting up the 'posts' route with route parameters
-app.get('/posts/:postId',function(req,res){
+app.get('/posts/:postId', (req, res) => {
   const urlParameter = req.params.postId;
 
-  Post.findById(urlParameter,function(err,post){
-    res.render('post',{post: post});
+  Post.findById(urlParameter, (err, post) => {
+    res.render('post', {
+      post: post
+    });
   });
 });
 
-
-
-
 // Setting up Port Listener
-app.listen(PORT, function() {
+app.listen(PORT, () => {
   console.log("Server started on port 3000");
 });
